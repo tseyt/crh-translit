@@ -154,7 +154,7 @@
                 </div>
             </div>
 
-            <!-- Feature Highlights (Restored) -->
+            <!-- Feature Highlights -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
                     <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
@@ -412,8 +412,31 @@
                 }
                 if (handled) continue;
 
-                const char = text[i];
+                let char = text[i];
                 const prevChar = i > 0 ? text[i-1] : ' ';
+
+                // HOMOGLYPH & TYPO NORMALIZATION (Critical for "mixed" input)
+                // If we see common Latin homoglyphs (c, e, p, y, x) followed by Cyrillic, assume they are Cyrillic.
+                if (i + 1 < len) {
+                     const nextChar = text[i+1];
+                     if (/[а-яА-Я]/.test(nextChar)) {
+                         // c -> с (es)
+                         if (char === 'c') char = 'с'; 
+                         if (char === 'C') char = 'С';
+                         // e -> е (ye/e)
+                         if (char === 'e') char = 'е'; 
+                         if (char === 'E') char = 'Е';
+                         // p -> р (er)
+                         if (char === 'p') char = 'р'; 
+                         if (char === 'P') char = 'Р';
+                         // y -> у (u)
+                         if (char === 'y') char = 'у'; 
+                         if (char === 'Y') char = 'У';
+                         // x -> х (ha)
+                         if (char === 'x') char = 'х'; 
+                         if (char === 'X') char = 'Х';
+                     }
+                }
 
                 // Soft Vowels Logic
                 if (char.toLowerCase() === 'е') {
