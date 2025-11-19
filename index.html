@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="crh" prefix="og: http://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO -->
+    <title>Qırımtatar Script Converter | Official Cyrillic to Latin Transliteration</title>
+    <meta name="description" content="Free bidirectional text converter for Crimean Tatar (Cyrillic ↔ Latin). Compliant with the 2012 Qurultay & 2021 Ukrainian Government standards. Fast, private, and browser-based.">
+    <meta name="keywords" content="Crimean Tatar, Qırımtatar, Crimean Tatar language, Cyrillic to Latin, Latin to Cyrillic, Transliteration, Converter, Latin alphabet, Qırım, Ukraine, Crimean Tatar translation, text tool, online converter">
+    <meta name="author" content="Qırımtatar Tools">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tseyt.github.io/crh-translit/" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="Qırımtatar Script Converter (Cyrillic ↔ Latin)">
+    <meta property="og:description" content="Convert Crimean Tatar text between Cyrillic and Latin scripts instantly. Supports large files and follows the official 1992/2012/2021 Latin alphabet standards.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="crh_UA">
+    <meta property="og:site_name" content="Qırımtatar Translit">
+    
+    <!-- JSON-LD Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Qırımtatar Script Converter",
+      "operatingSystem": "Web",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A professional tool for converting Crimean Tatar text between Cyrillic and Latin scripts, supporting the official 2012 and 2021 alphabet standards.",
+      "featureList": "Bidirectional conversion, Large file support, Context-aware digraph handling"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .textarea-no-resize { resize: none; }
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: #f1f5f9; }
+        textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white font-bold rounded-lg p-2 text-xl shadow-sm select-none">Qt</div>
+                <h1 class="text-xl font-semibold tracking-tight text-slate-900 hidden sm:block">Qırımtatar Converter <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full ml-2 border border-blue-100">Bi-directional</span></h1>
+                <h1 class="text-xl font-semibold tracking-tight text-slate-900 sm:hidden">Qt Converter</h1>
+            </div>
+            <div class="flex gap-4 text-sm items-center">
+                <a href="#" onclick="downloadOutput()" class="text-slate-500 hover:text-blue-600 transition flex items-center gap-2 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    <span class="hidden sm:inline">Save Result</span>
+                    <span class="sm:hidden">Save</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Controls & Upload -->
+            <div class="flex flex-col sm:flex-row justify-between items-end sm:items-center mb-6 gap-6">
+                
+                <!-- Mode Toggles -->
+                <div class="bg-white p-1 rounded-xl border border-slate-200 shadow-sm inline-flex w-full sm:w-auto">
+                    <button onclick="setMode('cyr-to-lat')" id="btn-c2l" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm">
+                        Cyrillic → Latin
+                    </button>
+                    <button onclick="setMode('lat-to-cyr')" id="btn-l2c" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                        Latin → Cyrillic
+                    </button>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="flex flex-col items-end w-full sm:w-auto">
+                    <label class="cursor-pointer bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-blue-400 hover:text-blue-600 transition px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        <span>Upload .txt File</span>
+                        <input type="file" id="file-upload" accept=".txt" class="hidden">
+                    </label>
+                    <div class="text-right mt-1.5 space-y-0.5">
+                        <p class="text-[11px] text-slate-400 font-medium">Max size: ~5MB (approx. 5M characters)</p>
+                        <p class="text-[10px] text-slate-400">
+                            <span class="text-blue-600 font-bold">Pro Tip:</span> Open PDF in Google Docs → Download as .txt
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Converter Interface -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden grid grid-cols-1 md:grid-cols-2 relative mb-12">
+                
+                <div id="loading-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex items-center justify-center hidden transition-opacity duration-300">
+                    <div class="flex flex-col items-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                        <h3 class="text-lg font-semibold text-slate-800">Processing Large Text...</h3>
+                        <p class="text-slate-500 text-sm">Converting content (this may take a few seconds)</p>
+                    </div>
+                </div>
+
+                <!-- Input -->
+                <div class="p-6 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col h-[600px]">
+                    <div class="flex justify-between items-center mb-4">
+                        <label id="input-label" class="text-sm font-bold text-slate-400 uppercase tracking-wider">Cyrillic Input</label>
+                        <span id="input-badge" class="text-xs bg-slate-100 text-slate-600 font-medium px-2.5 py-1 rounded-full border border-slate-200">Къырымтатар</span>
+                    </div>
+                    <textarea 
+                        id="input-text" 
+                        maxlength="5000000"
+                        class="flex-grow w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-lg leading-relaxed textarea-no-resize placeholder-slate-400 font-medium text-slate-700"
+                        placeholder="Paste text or upload a .txt file..."
+                        spellcheck="false"
+                    ></textarea>
+                    <div class="mt-4 flex justify-between items-center">
+                        <button onclick="clearText()" class="text-slate-400 hover:text-red-600 text-sm font-semibold transition flex items-center gap-1.5 group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            Clear
+                        </button>
+                        <div class="text-xs font-mono text-slate-400" id="char-count">0 chars</div>
+                    </div>
+                </div>
+
+                <!-- Output -->
+                <div class="p-6 bg-slate-50/50 flex flex-col h-[600px]">
+                    <div class="flex justify-between items-center mb-4">
+                        <label id="output-label" class="text-sm font-bold text-slate-400 uppercase tracking-wider">Latin Output</label>
+                        <span id="output-badge" class="text-xs bg-blue-100 text-blue-700 font-medium px-2.5 py-1 rounded-full border border-blue-200">Qırımtatar</span>
+                    </div>
+                    <textarea 
+                        id="output-text" 
+                        readonly 
+                        class="flex-grow w-full p-4 bg-white border border-slate-200 rounded-xl text-lg leading-relaxed focus:outline-none textarea-no-resize text-slate-800 shadow-sm"
+                        placeholder="Translation will appear here..."
+                    ></textarea>
+                    <div class="mt-4 flex justify-end gap-2">
+                        <button onclick="copyToClipboard()" id="copy-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold transition shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 active:scale-95 transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" /><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" /></svg>
+                            Copy Result
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Highlights (Restored) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+                        Smart Digraphs
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Automatically handles complex letter combinations like <strong>гъ</strong> (ğ), <strong>къ</strong> (q), <strong>нъ</strong> (ñ), and <strong>дж</strong> (c) so you don't have to correct them manually.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 bg-purple-500 rounded-full"></span>
+                        Context Aware
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Correctly converts context-sensitive vowels like <strong>е</strong>, <strong>ю</strong>, <strong>я</strong>, and <strong>ё</strong> depending on whether they appear at the start of a word or after consonants.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
+                        Softness Logic
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Intelligently handles the soft sign (<strong>ь</strong>) and soft vowels, converting patterns like <strong>ля</strong> to <strong>lâ</strong> and <strong>кя</strong> to <strong>kâ</strong> to match modern spelling.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Full Mapping Reference & About -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                
+                <!-- Full Mapping Table -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                     <h3 class="font-bold text-slate-800 text-lg mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        Full Character Mapping Rules
+                     </h3>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        
+                        <!-- Priority Digraphs & Vowels -->
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-bold text-[10px] uppercase text-blue-600 mb-2 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded">Digraphs</h4>
+                                <ul class="text-sm font-mono text-slate-600 space-y-1">
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Гъ</span> <b>Ğ</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Къ</span> <b>Q</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Нъ</span> <b>Ñ</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Дж</span> <b>C</b></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[10px] uppercase text-blue-600 mb-2 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded">Vowels</h4>
+                                <ul class="text-sm font-mono text-slate-600 space-y-1">
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>А</span> <b>A</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Э</span> <b>E</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>И</span> <b>İ</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ы</span> <b>I</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>О</span> <b>O</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>У</span> <b>U</b></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Contextual Vowels -->
+                        <div>
+                             <h4 class="font-bold text-[10px] uppercase text-blue-600 mb-2 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded">Contextual Vowels</h4>
+                             <ul class="text-sm font-mono text-slate-600 space-y-2">
+                                <li class="border-b border-slate-50 pb-1">
+                                    <div class="flex justify-between"><span>Е</span> <b>E / Ye</b></div>
+                                    <div class="text-[10px] text-slate-400">Ye (initial), E (medial)</div>
+                                </li>
+                                <li class="border-b border-slate-50 pb-1">
+                                    <div class="flex justify-between"><span>Ё</span> <b>Ö / Yo</b></div>
+                                    <div class="text-[10px] text-slate-400">Yo (initial), Ö (medial)</div>
+                                </li>
+                                <li class="border-b border-slate-50 pb-1">
+                                    <div class="flex justify-between"><span>Ю</span> <b>Ü / Yu</b></div>
+                                    <div class="text-[10px] text-slate-400">Yu (initial), Ü (medial)</div>
+                                </li>
+                                <li class="border-b border-slate-50 pb-1">
+                                    <div class="flex justify-between"><span>Я</span> <b>Â / Ya</b></div>
+                                    <div class="text-[10px] text-slate-400">Ya (initial), Â (soft)</div>
+                                </li>
+                             </ul>
+                        </div>
+
+                        <!-- Consonants 1 -->
+                        <div>
+                            <h4 class="font-bold text-[10px] uppercase text-slate-400 mb-2 tracking-wider">Consonants A-K</h4>
+                            <ul class="text-sm font-mono text-slate-600 space-y-1">
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Б</span> <b>B</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>В</span> <b>V</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Г</span> <b>G</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Д</span> <b>D</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ж</span> <b>J</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>З</span> <b>Z</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Й</span> <b>Y</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>К</span> <b>K</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Л</span> <b>L</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>М</span> <b>M</b></li>
+                            </ul>
+                        </div>
+
+                        <!-- Consonants 2 -->
+                        <div>
+                            <h4 class="font-bold text-[10px] uppercase text-slate-400 mb-2 tracking-wider">Consonants N-Z</h4>
+                            <ul class="text-sm font-mono text-slate-600 space-y-1">
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Н</span> <b>N</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>П</span> <b>P</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Р</span> <b>R</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>С</span> <b>S</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Т</span> <b>T</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ф</span> <b>F</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Х</span> <b>H</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ц</span> <b>Ts</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ч</span> <b>Ç</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ш</span> <b>Ş</b></li>
+                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Щ</span> <b>Şç</b></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- About the Standard -->
+                <div class="bg-slate-50 rounded-xl border border-slate-200 p-6 h-fit">
+                    <h3 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        About the Script
+                    </h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-3">
+                        This converter follows the <strong>Latin Alphabet Standard</strong> approved by the <strong><a href="https://en.wikipedia.org/wiki/Crimean_Tatar_alphabet#Latin_alphabet" target="_blank" class="text-blue-600 hover:underline">Qurultay of the Crimean Tatar People (1992/2012)</a></strong> and formally adopted by the <strong><a href="https://zakon.rada.gov.ua/laws/show/993-2021-%D0%BF" target="_blank" class="text-blue-600 hover:underline">Cabinet of Ministers of Ukraine</a></strong> (Resolution No. 993, 2021).
+                    </p>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        It is designed to assist in the transition from the Soviet-era Cyrillic script to the modern Common Turkic Latin alphabet, preserving the unique phonetics of the Crimean Tatar language (Qırımtatar tili).
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-12">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
+            <div class="mb-4 md:mb-0 text-center md:text-left">
+                <p class="font-medium text-slate-900">Qırımtatar Script Tools</p>
+                <p class="mt-1">Open source tool for the preservation of language.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="https://github.com/tseyt/crh-translit" target="_blank" rel="noopener" class="hover:text-blue-600 transition">GitHub</a>
+                <a href="https://github.com/tseyt/crh-translit/issues" target="_blank" rel="noopener" class="hover:text-blue-600 transition">Report Issue</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- State ---
+        let currentMode = 'cyr-to-lat'; 
+        const inputEl = document.getElementById('input-text');
+        const outputEl = document.getElementById('output-text');
+        const charCountEl = document.getElementById('char-count');
+        const loadingEl = document.getElementById('loading-overlay');
+        
+        // --- Helpers ---
+        function isVowel(char) {
+            return /[аеёиоуыэюяАЕЁИОУЫЭЮЯaäeıioöuüâAÄEİIJOÖUÜÂ]/.test(char);
+        }
+        
+        function isFrontVowel(char) {
+             return /[eéäöüiEÉÄÖÜİ]/.test(char);
+        }
+
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // --- Data: Cyrillic -> Latin ---
+        const cyrToLatMap = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 
+            'ж': 'j', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 
+            'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 
+            'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 
+            'х': 'h', 'ц': 'ts', 'ч': 'ç', 'ш': 'ş', 'щ': 'şç', 
+            'ы': 'ı', 'э': 'e', 'ъ': '', 'ь': '',
+            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 
+            'Ж': 'J', 'З': 'Z', 'И': 'İ', 'Й': 'Y', 'К': 'K', 
+            'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 
+            'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 
+            'Х': 'H', 'Ц': 'Ts', 'Ч': 'Ç', 'Ш': 'Ş', 'Щ': 'Şç', 
+            'Ы': 'I', 'Э': 'E', 'Ъ': '', 'Ь': ''
+        };
+
+        const cyrDigraphs = [
+            { cyr: 'Гъ', lat: 'Ğ' }, { cyr: 'гъ', lat: 'ğ' },
+            { cyr: 'Къ', lat: 'Q' }, { cyr: 'къ', lat: 'q' },
+            { cyr: 'Нъ', lat: 'Ñ' }, { cyr: 'нъ', lat: 'ñ' },
+            { cyr: 'Дж', lat: 'C' }, { cyr: 'дж', lat: 'c' }
+        ];
+
+        // --- Data: Latin -> Cyrillic ---
+        const latToCyrMap = {
+            'a': 'а', 'b': 'б', 'c': 'дж', 'ç': 'ч', 'd': 'д',
+            'e': 'е', 'f': 'ф', 'g': 'г', 'ğ': 'гъ', 'h': 'х',
+            'ı': 'ы', 'i': 'и', 'j': 'ж', 'k': 'к', 'l': 'л',
+            'm': 'м', 'n': 'н', 'ñ': 'нъ', 'o': 'о', 'ö': 'ё',
+            'p': 'п', 'q': 'къ', 'r': 'р', 's': 'с', 'ş': 'ш',
+            't': 'т', 'u': 'у', 'ü': 'ю', 'v': 'в', 'y': 'й',
+            'z': 'з', 'â': 'я',
+            'A': 'А', 'B': 'Б', 'C': 'Дж', 'Ç': 'Ч', 'D': 'Д',
+            'E': 'Е', 'F': 'Ф', 'G': 'Г', 'Ğ': 'Гъ', 'H': 'Х',
+            'I': 'Ы', 'İ': 'И', 'J': 'Ж', 'K': 'К', 'L': 'Л',
+            'M': 'М', 'N': 'Н', 'Ñ': 'Нъ', 'O': 'О', 'Ö': 'Ё',
+            'P': 'П', 'Q': 'Къ', 'R': 'Р', 'S': 'С', 'Ş': 'Ш',
+            'T': 'Т', 'U': 'У', 'Ü': 'Ю', 'V': 'В', 'Y': 'Й',
+            'Z': 'З', 'Â': 'Я'
+        };
+
+        const latDigraphs = [
+            { lat: 'ya', cyr: 'я' }, { lat: 'Ya', cyr: 'Я' },
+            { lat: 'yu', cyr: 'ю' }, { lat: 'Yu', cyr: 'Ю' },
+            { lat: 'yo', cyr: 'ё' }, { lat: 'Yo', cyr: 'Ё' },
+            { lat: 'ye', cyr: 'е' }, { lat: 'Ye', cyr: 'Е' },
+            { lat: 'ts', cyr: 'ц' }, { lat: 'Ts', cyr: 'Ц' },
+            { lat: 'şç', cyr: 'щ' }, { lat: 'Şç', cyr: 'Щ' }
+        ];
+
+        // --- Core Logic: Cyrillic -> Latin ---
+        function convertCyrToLat(text) {
+            let result = '';
+            let i = 0;
+            const len = text.length;
+            
+            while (i < len) {
+                let handled = false;
+                
+                // Check Digraphs
+                for (let d of cyrDigraphs) {
+                    if (text.startsWith(d.cyr, i)) {
+                        result += d.lat; i += d.cyr.length; handled = true; break;
+                    }
+                    if (text.startsWith(d.cyr.toUpperCase(), i)) {
+                        result += d.lat.toUpperCase(); i += d.cyr.length; handled = true; break;
+                    }
+                }
+                if (handled) continue;
+
+                const char = text[i];
+                const prevChar = i > 0 ? text[i-1] : ' ';
+
+                // Soft Vowels Logic
+                if (char.toLowerCase() === 'е') {
+                    const isUpper = char === 'Е';
+                    if (i === 0 || isVowel(prevChar) || /[\s\n\r\tъьЪЬ\-]/.test(prevChar)) {
+                         result += isUpper ? 'Ye' : 'ye';
+                    } else {
+                        result += isUpper ? 'E' : 'e';
+                    }
+                    i++; continue;
+                }
+                if (char.toLowerCase() === 'ё') {
+                    const isUpper = char === 'Ё';
+                    if (i === 0 || isVowel(prevChar) || /[\s\n\r\tъьЪЬ\-]/.test(prevChar)) {
+                        result += isUpper ? 'Yo' : 'yo';
+                    } else {
+                        result += isUpper ? 'Ö' : 'ö';
+                    }
+                    i++; continue;
+                }
+                if (char.toLowerCase() === 'ю') {
+                    const isUpper = char === 'Ю';
+                    if (i === 0 || isVowel(prevChar) || /[\s\n\r\tъьЪЬ\-]/.test(prevChar)) {
+                        result += isUpper ? 'Yu' : 'yu';
+                    } else {
+                        result += isUpper ? 'Ü' : 'ü';
+                    }
+                    i++; continue;
+                }
+                if (char.toLowerCase() === 'я') {
+                    const isUpper = char === 'Я';
+                    result += isUpper ? 'Ya' : 'ya'; 
+                    i++; continue;
+                }
+
+                if (cyrToLatMap[char] !== undefined) {
+                    result += cyrToLatMap[char];
+                    i++; continue;
+                }
+
+                result += char;
+                i++;
+            }
+            // Post-process lya->lâ etc.
+            return result
+                .replace(/lya/g, 'lâ').replace(/Lya/g, 'Lâ').replace(/LYA/g, 'LÂ')
+                .replace(/kya/g, 'kâ').replace(/Kya/g, 'Kâ').replace(/KYA/g, 'KÂ')
+                .replace(/gya/g, 'gâ').replace(/Gya/g, 'Gâ').replace(/GYA/g, 'GÂ');
+        }
+
+        // --- Core Logic: Latin -> Cyrillic ---
+        function convertLatToCyr(text) {
+            let result = '';
+            let i = 0;
+            const len = text.length;
+
+            while (i < len) {
+                let handled = false;
+                
+                for (let d of latDigraphs) {
+                    if (text.startsWith(d.lat, i)) {
+                        result += d.cyr; i += d.lat.length; handled = true; break;
+                    }
+                }
+                if (handled) continue;
+
+                const char = text[i];
+                const prevChar = i > 0 ? text[i-1] : ' ';
+
+                if (char.toLowerCase() === 'e') {
+                    const isUpper = char === 'E';
+                    if (i === 0 || /[\s\n\r\t\-]/.test(prevChar) || isVowel(prevChar)) {
+                        result += isUpper ? 'Э' : 'э';
+                    } else {
+                        result += isUpper ? 'Е' : 'е';
+                    }
+                    i++; continue;
+                }
+
+                if (latToCyrMap[char] !== undefined) {
+                    result += latToCyrMap[char];
+                    i++; continue;
+                }
+
+                result += char;
+                i++;
+            }
+            
+            const frontVowelsCyr = /[еиёюяэЕИЁЮЯЭ]/;
+            let softResult = '';
+            for (let j=0; j<result.length; j++) {
+                softResult += result[j];
+                if ((result[j] === 'л' || result[j] === 'Л') && j > 0) {
+                    const prev = result[j-1];
+                    const next = j < result.length - 1 ? result[j+1] : ' ';
+                    if (frontVowelsCyr.test(prev) && !isVowel(next) && next !== 'ь' && next !== 'ъ') {
+                         softResult += 'ь';
+                    }
+                }
+            }
+            
+            return softResult;
+        }
+
+        // --- UI Logic ---
+        function setMode(mode) {
+            currentMode = mode;
+            const btnC2L = document.getElementById('btn-c2l');
+            const btnL2C = document.getElementById('btn-l2c');
+            const inLbl = document.getElementById('input-label');
+            const outLbl = document.getElementById('output-label');
+            const inBdg = document.getElementById('input-badge');
+            const outBdg = document.getElementById('output-badge');
+
+            if (mode === 'cyr-to-lat') {
+                btnC2L.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm";
+                btnL2C.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all";
+                inLbl.textContent = "Cyrillic Input"; inBdg.textContent = "Къырымтатар";
+                outLbl.textContent = "Latin Output"; outBdg.textContent = "Qırımtatar";
+            } else {
+                btnL2C.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm";
+                btnC2L.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all";
+                inLbl.textContent = "Latin Input"; inBdg.textContent = "Qırımtatar";
+                outLbl.textContent = "Cyrillic Output"; outBdg.textContent = "Къырымтатар";
+            }
+            
+            const text = inputEl.value;
+            if (text.length > 0) processText(text);
+        }
+
+        const processText = debounce((text) => {
+            // Approximate character count formatting
+            const count = text.length;
+            charCountEl.textContent = count.toLocaleString() + ' chars';
+            
+            if (count > 100000) {
+                loadingEl.classList.remove('hidden');
+                // Yield to UI thread
+                setTimeout(() => {
+                    const res = currentMode === 'cyr-to-lat' ? convertCyrToLat(text) : convertLatToCyr(text);
+                    outputEl.value = res;
+                    loadingEl.classList.add('hidden');
+                }, 50);
+            } else {
+                const res = currentMode === 'cyr-to-lat' ? convertCyrToLat(text) : convertLatToCyr(text);
+                outputEl.value = res;
+            }
+        }, 300);
+
+        inputEl.addEventListener('input', (e) => {
+            processText(e.target.value);
+        });
+
+        function clearText() {
+            inputEl.value = '';
+            outputEl.value = '';
+            charCountEl.textContent = '0 chars';
+            inputEl.focus();
+        }
+
+        function copyToClipboard() {
+            if (!outputEl.value) return;
+            outputEl.select();
+            outputEl.setSelectionRange(0, 9999999); 
+
+            try {
+                document.execCommand('copy');
+                const btn = document.getElementById('copy-btn');
+                const oldHtml = btn.innerHTML;
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg> Copied!`;
+                btn.classList.replace('bg-blue-600', 'bg-green-600');
+                btn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+                
+                setTimeout(() => {
+                    btn.innerHTML = oldHtml;
+                    btn.classList.replace('bg-green-600', 'bg-blue-600');
+                    btn.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
+                }, 2000);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            }
+        }
+        
+        const fileInput = document.getElementById('file-upload');
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert("File is larger than 5MB. It may slow down the browser.");
+            }
+
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const text = ev.target.result;
+                inputEl.value = text;
+                processText(text);
+            };
+            reader.readAsText(file);
+        });
+
+        function downloadOutput() {
+            const text = outputEl.value;
+            if (!text) return;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `converted-${currentMode === 'cyr-to-lat' ? 'latin' : 'cyrillic'}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
