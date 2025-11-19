@@ -38,7 +38,7 @@ Cyrillic often uses one character to represent two sounds (yotated vowels) or so
 Since this is a static web application, you don't need npm or a build step.
 
 1. **Clone the repo**  
-   git clone \[https://github.com/yourusername/crh-translit.git\](https://github.com/yourusername/crh-translit.git)
+   git clone [https://github.com/tseyt/crh-translit.git](https://github.com/tseyt/crh-translit.git)
 
 2. **Run locally**  
    * Open index.html in any web browser.  
