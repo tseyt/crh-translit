@@ -37,7 +37,20 @@
     }
     </script>
 
+    <!-- Tailwind CSS with Dark Mode Strategy -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -46,19 +59,39 @@
         textarea::-webkit-scrollbar-track { background: #f1f5f9; }
         textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         textarea::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Dark mode scrollbar */
+        .dark textarea::-webkit-scrollbar-track { background: #1e293b; }
+        .dark textarea::-webkit-scrollbar-thumb { background: #475569; }
+        .dark textarea::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
+    
+    <!-- Dark Mode Init -->
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
-    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-20">
+    <nav class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-20 transition-colors duration-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="bg-blue-600 text-white font-bold rounded-lg p-2 text-xl shadow-sm select-none">Qt</div>
-                <h1 class="text-xl font-semibold tracking-tight text-slate-900 hidden sm:block">Qırımtatar Converter <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full ml-2 border border-blue-100">Bi-directional</span></h1>
-                <h1 class="text-xl font-semibold tracking-tight text-slate-900 sm:hidden">Qt Converter</h1>
+                <h1 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white hidden sm:block">Qırımtatar Converter <span class="text-xs text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full ml-2 border border-blue-100 dark:border-blue-800">Bi-directional</span></h1>
+                <h1 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white sm:hidden">Qt Converter</h1>
             </div>
             <div class="flex gap-4 text-sm items-center">
-                <a href="#" onclick="downloadOutput()" class="text-slate-500 hover:text-blue-600 transition flex items-center gap-2 font-medium">
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" type="button" class="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200 dark:focus:ring-slate-700 rounded-lg text-sm p-2.5 transition">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+                <div class="h-4 w-px bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
+                <a href="#" onclick="downloadOutput()" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-2 font-medium">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     <span class="hidden sm:inline">Save Result</span>
                     <span class="sm:hidden">Save</span>
@@ -75,78 +108,78 @@
             <div class="flex flex-col sm:flex-row justify-between items-end sm:items-center mb-6 gap-6">
                 
                 <!-- Mode Toggles -->
-                <div class="bg-white p-1 rounded-xl border border-slate-200 shadow-sm inline-flex w-full sm:w-auto">
+                <div class="bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm inline-flex w-full sm:w-auto transition-colors">
                     <button onclick="setMode('cyr-to-lat')" id="btn-c2l" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm">
                         Cyrillic → Latin
                     </button>
-                    <button onclick="setMode('lat-to-cyr')" id="btn-l2c" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    <button onclick="setMode('lat-to-cyr')" id="btn-l2c" class="flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
                         Latin → Cyrillic
                     </button>
                 </div>
 
                 <!-- Upload Section -->
                 <div class="flex flex-col items-end w-full sm:w-auto">
-                    <label class="cursor-pointer bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-blue-400 hover:text-blue-600 transition px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                    <label class="cursor-pointer bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-sm w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         <span>Upload .txt File</span>
                         <input type="file" id="file-upload" accept=".txt" class="hidden">
                     </label>
                     <div class="text-right mt-1.5 space-y-0.5">
-                        <p class="text-[11px] text-slate-400 font-medium">Max size: ~5MB (approx. 5M characters)</p>
-                        <p class="text-[10px] text-slate-400">
-                            <span class="text-blue-600 font-bold">Pro Tip:</span> Open PDF in Google Docs → Download as .txt
+                        <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Max size: ~5MB (approx. 5M characters)</p>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500">
+                            <span class="text-blue-600 dark:text-blue-400 font-bold">Pro Tip:</span> Open PDF in Google Docs → Download as .txt
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Main Converter Interface -->
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden grid grid-cols-1 md:grid-cols-2 relative mb-12">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden grid grid-cols-1 md:grid-cols-2 relative mb-12 transition-colors">
                 
-                <div id="loading-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex items-center justify-center hidden transition-opacity duration-300">
+                <div id="loading-overlay" class="absolute inset-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm z-10 flex items-center justify-center hidden transition-opacity duration-300">
                     <div class="flex flex-col items-center">
                         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                        <h3 class="text-lg font-semibold text-slate-800">Processing Large Text...</h3>
-                        <p class="text-slate-500 text-sm">Converting content (this may take a few seconds)</p>
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-white">Processing Large Text...</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Converting content (this may take a few seconds)</p>
                     </div>
                 </div>
 
                 <!-- Input -->
-                <div class="p-6 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col h-[600px]">
+                <div class="p-6 border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 flex flex-col h-[600px]">
                     <div class="flex justify-between items-center mb-4">
-                        <label id="input-label" class="text-sm font-bold text-slate-400 uppercase tracking-wider">Cyrillic Input</label>
-                        <span id="input-badge" class="text-xs bg-slate-100 text-slate-600 font-medium px-2.5 py-1 rounded-full border border-slate-200">Къырымтатар</span>
+                        <label id="input-label" class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Cyrillic Input</label>
+                        <span id="input-badge" class="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-600">Къырымтатар</span>
                     </div>
                     <textarea 
                         id="input-text" 
                         maxlength="5000000"
-                        class="flex-grow w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-lg leading-relaxed textarea-no-resize placeholder-slate-400 font-medium text-slate-700"
+                        class="flex-grow w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-lg leading-relaxed textarea-no-resize placeholder-slate-400 dark:placeholder-slate-600 font-medium text-slate-700 dark:text-slate-200"
                         placeholder="Paste text or upload a .txt file..."
                         spellcheck="false"
                     ></textarea>
                     <div class="mt-4 flex justify-between items-center">
-                        <button onclick="clearText()" class="text-slate-400 hover:text-red-600 text-sm font-semibold transition flex items-center gap-1.5 group">
+                        <button onclick="clearText()" class="text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 text-sm font-semibold transition flex items-center gap-1.5 group">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:scale-110 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
                             Clear
                         </button>
-                        <div class="text-xs font-mono text-slate-400" id="char-count">0 chars</div>
+                        <div class="text-xs font-mono text-slate-400 dark:text-slate-600" id="char-count">0 chars</div>
                     </div>
                 </div>
 
                 <!-- Output -->
-                <div class="p-6 bg-slate-50/50 flex flex-col h-[600px]">
+                <div class="p-6 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col h-[600px]">
                     <div class="flex justify-between items-center mb-4">
-                        <label id="output-label" class="text-sm font-bold text-slate-400 uppercase tracking-wider">Latin Output</label>
-                        <span id="output-badge" class="text-xs bg-blue-100 text-blue-700 font-medium px-2.5 py-1 rounded-full border border-blue-200">Qırımtatar</span>
+                        <label id="output-label" class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Latin Output</label>
+                        <span id="output-badge" class="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-medium px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-800">Qırımtatar</span>
                     </div>
                     <textarea 
                         id="output-text" 
                         readonly 
-                        class="flex-grow w-full p-4 bg-white border border-slate-200 rounded-xl text-lg leading-relaxed focus:outline-none textarea-no-resize text-slate-800 shadow-sm"
-                        placeholder="Transliteration will appear here..."
+                        class="flex-grow w-full p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-lg leading-relaxed focus:outline-none textarea-no-resize text-slate-800 dark:text-slate-100 shadow-sm"
+                        placeholder="Translation will appear here..."
                     ></textarea>
                     <div class="mt-4 flex justify-end gap-2">
-                        <button onclick="copyToClipboard()" id="copy-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold transition shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 active:scale-95 transform">
+                        <button onclick="copyToClipboard()" id="copy-btn" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white px-6 py-2.5 rounded-lg font-semibold transition shadow-lg hover:shadow-blue-500/30 flex items-center gap-2 active:scale-95 transform">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" /><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" /></svg>
                             Copy Result
                         </button>
@@ -156,30 +189,30 @@
 
             <!-- Feature Highlights -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
-                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition">
+                    <h3 class="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
                         Smart Digraphs
                     </h3>
-                    <p class="text-sm text-slate-600 leading-relaxed">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                         Automatically handles complex letter combinations like <strong>гъ</strong> (ğ), <strong>къ</strong> (q), <strong>нъ</strong> (ñ), and <strong>дж</strong> (c) so you don't have to correct them manually.
                     </p>
                 </div>
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
-                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition">
+                    <h3 class="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 bg-purple-500 rounded-full"></span>
                         Context Aware
                     </h3>
-                    <p class="text-sm text-slate-600 leading-relaxed">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                         Correctly converts context-sensitive vowels like <strong>е</strong>, <strong>ю</strong>, <strong>я</strong>, and <strong>ё</strong> depending on whether they appear at the start of a word or after consonants.
                     </p>
                 </div>
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
-                    <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition">
+                    <h3 class="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
                         Softness Logic
                     </h3>
-                    <p class="text-sm text-slate-600 leading-relaxed">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                         Intelligently handles the soft sign (<strong>ь</strong>) and soft vowels, converting patterns like <strong>ля</strong> to <strong>lâ</strong> and <strong>кя</strong> to <strong>kâ</strong> to match modern spelling.
                     </p>
                 </div>
@@ -189,9 +222,9 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                 
                 <!-- Full Mapping Table -->
-                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                     <h3 class="font-bold text-slate-800 text-lg mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 transition-colors">
+                     <h3 class="font-bold text-slate-800 dark:text-white text-lg mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         Full Character Mapping Rules
                      </h3>
                      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -199,82 +232,82 @@
                         <!-- Priority Digraphs & Vowels -->
                         <div class="space-y-6">
                             <div>
-                                <h4 class="font-bold text-[10px] uppercase text-blue-600 mb-2 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded">Digraphs</h4>
-                                <ul class="text-sm font-mono text-slate-600 space-y-1">
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Гъ</span> <b>Ğ</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Къ</span> <b>Q</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Нъ</span> <b>Ñ</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Дж</span> <b>C</b></li>
+                                <h4 class="font-bold text-[10px] uppercase text-blue-600 dark:text-blue-400 mb-2 tracking-wider bg-blue-50 dark:bg-blue-900/30 inline-block px-2 py-0.5 rounded">Digraphs</h4>
+                                <ul class="text-sm font-mono text-slate-600 dark:text-slate-300 space-y-1">
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Гъ</span> <b>Ğ</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Къ</span> <b>Q</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Нъ</span> <b>Ñ</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Дж</span> <b>C</b></li>
                                 </ul>
                             </div>
                             <div>
-                                <h4 class="font-bold text-[10px] uppercase text-blue-600 mb-2 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded">Vowels</h4>
-                                <ul class="text-sm font-mono text-slate-600 space-y-1">
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>А</span> <b>A</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Э</span> <b>E</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>И</span> <b>İ</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ы</span> <b>I</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>О</span> <b>O</b></li>
-                                    <li class="flex justify-between border-b border-slate-50 pb-1"><span>У</span> <b>U</b></li>
+                                <h4 class="font-bold text-[10px] uppercase text-blue-600 dark:text-blue-400 mb-2 tracking-wider bg-blue-50 dark:bg-blue-900/30 inline-block px-2 py-0.5 rounded">Vowels</h4>
+                                <ul class="text-sm font-mono text-slate-600 dark:text-slate-300 space-y-1">
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>А</span> <b>A</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Э</span> <b>E</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>И</span> <b>İ</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Ы</span> <b>I</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>О</span> <b>O</b></li>
+                                    <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>У</span> <b>U</b></li>
                                 </ul>
                             </div>
                         </div>
 
                         <!-- Contextual Vowels -->
                         <div>
-                             <h4 class="font-bold text-[10px] uppercase text-blue-600 mb-2 tracking-wider bg-blue-50 inline-block px-2 py-0.5 rounded">Contextual Vowels</h4>
-                             <ul class="text-sm font-mono text-slate-600 space-y-2">
-                                <li class="border-b border-slate-50 pb-1">
+                             <h4 class="font-bold text-[10px] uppercase text-blue-600 dark:text-blue-400 mb-2 tracking-wider bg-blue-50 dark:bg-blue-900/30 inline-block px-2 py-0.5 rounded">Contextual Vowels</h4>
+                             <ul class="text-sm font-mono text-slate-600 dark:text-slate-300 space-y-2">
+                                <li class="border-b border-slate-50 dark:border-slate-700 pb-1">
                                     <div class="flex justify-between"><span>Е</span> <b>E / Ye</b></div>
-                                    <div class="text-[10px] text-slate-400">Ye (initial), E (medial)</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500">Ye (initial), E (medial)</div>
                                 </li>
-                                <li class="border-b border-slate-50 pb-1">
+                                <li class="border-b border-slate-50 dark:border-slate-700 pb-1">
                                     <div class="flex justify-between"><span>Ё</span> <b>Ö / Yo</b></div>
-                                    <div class="text-[10px] text-slate-400">Yo (initial), Ö (medial)</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500">Yo (initial), Ö (medial)</div>
                                 </li>
-                                <li class="border-b border-slate-50 pb-1">
+                                <li class="border-b border-slate-50 dark:border-slate-700 pb-1">
                                     <div class="flex justify-between"><span>Ю</span> <b>Ü / Yu</b></div>
-                                    <div class="text-[10px] text-slate-400">Yu (initial), Ü (medial)</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500">Yu (initial), Ü (medial)</div>
                                 </li>
-                                <li class="border-b border-slate-50 pb-1">
+                                <li class="border-b border-slate-50 dark:border-slate-700 pb-1">
                                     <div class="flex justify-between"><span>Я</span> <b>Â / Ya</b></div>
-                                    <div class="text-[10px] text-slate-400">Ya (initial), Â (soft)</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500">Ya (initial), Â (soft)</div>
                                 </li>
                              </ul>
                         </div>
 
                         <!-- Consonants 1 -->
                         <div>
-                            <h4 class="font-bold text-[10px] uppercase text-slate-400 mb-2 tracking-wider">Consonants A-K</h4>
-                            <ul class="text-sm font-mono text-slate-600 space-y-1">
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Б</span> <b>B</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>В</span> <b>V</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Г</span> <b>G</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Д</span> <b>D</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ж</span> <b>J</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>З</span> <b>Z</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Й</span> <b>Y</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>К</span> <b>K</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Л</span> <b>L</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>М</span> <b>M</b></li>
+                            <h4 class="font-bold text-[10px] uppercase text-slate-400 dark:text-slate-500 mb-2 tracking-wider">Consonants A-K</h4>
+                            <ul class="text-sm font-mono text-slate-600 dark:text-slate-300 space-y-1">
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Б</span> <b>B</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>В</span> <b>V</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Г</span> <b>G</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Д</span> <b>D</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Ж</span> <b>J</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>З</span> <b>Z</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Й</span> <b>Y</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>К</span> <b>K</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Л</span> <b>L</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>М</span> <b>M</b></li>
                             </ul>
                         </div>
 
                         <!-- Consonants 2 -->
                         <div>
-                            <h4 class="font-bold text-[10px] uppercase text-slate-400 mb-2 tracking-wider">Consonants N-Z</h4>
-                            <ul class="text-sm font-mono text-slate-600 space-y-1">
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Н</span> <b>N</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>П</span> <b>P</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Р</span> <b>R</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>С</span> <b>S</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Т</span> <b>T</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ф</span> <b>F</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Х</span> <b>H</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ц</span> <b>Ts</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ч</span> <b>Ç</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Ш</span> <b>Ş</b></li>
-                                <li class="flex justify-between border-b border-slate-50 pb-1"><span>Щ</span> <b>Şç</b></li>
+                            <h4 class="font-bold text-[10px] uppercase text-slate-400 dark:text-slate-500 mb-2 tracking-wider">Consonants N-Z</h4>
+                            <ul class="text-sm font-mono text-slate-600 dark:text-slate-300 space-y-1">
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Н</span> <b>N</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>П</span> <b>P</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Р</span> <b>R</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>С</span> <b>S</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Т</span> <b>T</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Ф</span> <b>F</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Х</span> <b>H</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Ц</span> <b>Ts</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Ч</span> <b>Ç</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Ш</span> <b>Ş</b></li>
+                                <li class="flex justify-between border-b border-slate-50 dark:border-slate-700 pb-1"><span>Щ</span> <b>Şç</b></li>
                             </ul>
                         </div>
 
@@ -282,15 +315,15 @@
                 </div>
 
                 <!-- About the Standard -->
-                <div class="bg-slate-50 rounded-xl border border-slate-200 p-6 h-fit">
-                    <h3 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div class="bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 h-fit transition-colors">
+                    <h3 class="font-bold text-slate-800 dark:text-white text-lg mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         About the Script
                     </h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-3">
-                        This converter follows the <strong>Latin Alphabet Standard</strong> approved by the <strong><a href="https://en.wikipedia.org/wiki/Crimean_Tatar_alphabet#Latin_alphabet" target="_blank" class="text-blue-600 hover:underline">Qurultay of the Crimean Tatar People (1992/2012)</a></strong> and formally adopted by the <strong><a href="https://zakon.rada.gov.ua/laws/show/993-2021-%D0%BF" target="_blank" class="text-blue-600 hover:underline">Cabinet of Ministers of Ukraine</a></strong> (Resolution No. 993, 2021).
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                        This converter follows the <strong>Latin Alphabet Standard</strong> approved by the <strong><a href="https://en.wikipedia.org/wiki/Crimean_Tatar_alphabet#Latin_alphabet" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">Qurultay of the Crimean Tatar People (1992/2012)</a></strong> and formally adopted by the <strong><a href="https://zakon.rada.gov.ua/laws/show/993-2021-%D0%BF" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">Cabinet of Ministers of Ukraine</a></strong> (Resolution No. 993, 2021).
                     </p>
-                    <p class="text-sm text-slate-600 leading-relaxed">
+                    <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                         It is designed to assist in the transition from the Soviet-era Cyrillic script to the modern Common Turkic Latin alphabet, preserving the unique phonetics of the Crimean Tatar language (Qırımtatar tili).
                     </p>
                 </div>
@@ -299,20 +332,47 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 py-12">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-slate-500 dark:text-slate-400 text-sm">
             <div class="mb-4 md:mb-0 text-center md:text-left">
-                <p class="font-medium text-slate-900">Qırımtatar Script Tools</p>
+                <p class="font-medium text-slate-900 dark:text-white">Qırımtatar Script Tools</p>
                 <p class="mt-1">Open source tool for the preservation of language.</p>
             </div>
             <div class="flex space-x-6">
-                <a href="https://github.com/tseyt/crh-translit" target="_blank" rel="noopener" class="hover:text-blue-600 transition">GitHub</a>
-                <a href="https://github.com/tseyt/crh-translit/issues" target="_blank" rel="noopener" class="hover:text-blue-600 transition">Report Issue</a>
+                <a href="https://github.com/tseyt/crh-translit" target="_blank" rel="noopener" class="hover:text-blue-600 dark:hover:text-blue-400 transition">GitHub</a>
+                <a href="https://github.com/tseyt/crh-translit/issues" target="_blank" rel="noopener" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Report Issue</a>
             </div>
         </div>
     </footer>
 
     <script>
+        // Dark Mode Logic
+        var themeToggleBtn = document.getElementById('theme-toggle');
+        var darkIcon = document.getElementById('theme-toggle-dark-icon');
+        var lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Set initial icon
+        if (document.documentElement.classList.contains('dark')) {
+            lightIcon.classList.remove('hidden');
+        } else {
+            darkIcon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            // Toggle icons
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+
+            // If is dark
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
         // --- State ---
         let currentMode = 'cyr-to-lat'; 
         const inputEl = document.getElementById('input-text');
@@ -553,12 +613,12 @@
 
             if (mode === 'cyr-to-lat') {
                 btnC2L.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm";
-                btnL2C.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all";
+                btnL2C.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all";
                 inLbl.textContent = "Cyrillic Input"; inBdg.textContent = "Къырымтатар";
                 outLbl.textContent = "Latin Output"; outBdg.textContent = "Qırımtatar";
             } else {
                 btnL2C.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm";
-                btnC2L.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all";
+                btnC2L.className = "flex-1 sm:flex-none px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all";
                 inLbl.textContent = "Latin Input"; inBdg.textContent = "Qırımtatar";
                 outLbl.textContent = "Cyrillic Output"; outBdg.textContent = "Къырымтатар";
             }
@@ -609,11 +669,17 @@
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg> Copied!`;
                 btn.classList.replace('bg-blue-600', 'bg-green-600');
                 btn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+                // Dark mode variants for success state
+                btn.classList.replace('dark:bg-blue-600', 'dark:bg-green-600');
+                btn.classList.replace('dark:hover:bg-blue-500', 'dark:hover:bg-green-500');
                 
                 setTimeout(() => {
                     btn.innerHTML = oldHtml;
                     btn.classList.replace('bg-green-600', 'bg-blue-600');
                     btn.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
+                    // Revert dark mode variants
+                    btn.classList.replace('dark:bg-green-600', 'dark:bg-blue-600');
+                    btn.classList.replace('dark:hover:bg-green-500', 'dark:hover:bg-blue-500');
                 }, 2000);
             } catch (err) {
                 console.error('Fallback: Oops, unable to copy', err);
